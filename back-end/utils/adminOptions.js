@@ -5,8 +5,15 @@ const { Client, ClientStore } = require('../models/Client.js');
 const { Category } = require('../models/Category.js');
 const { Product } = require('../models/Product.js');
 const { Seller, SellerItem } = require('../models/Seller.js');
-
 const bcrypt = require("bcryptjs");
+
+const Email = require('../utils/Email');
+
+require('dotenv').config();
+
+const {
+    URL_FRONT,
+} = process.env;
 
 const generateResource = (model, properties, actions) => {
     return {
@@ -24,7 +31,7 @@ const cleanCpfCnpj = (cpfCnpj) => {
     return cpfCnpj.replace(/[^\w\s]/gi, '');
 }
 
-const generateAdminOptions = () => {
+const generateAdminOptions = (root_dir) => {
     return {
         resources: [
             generateResource(Store, {}, {
@@ -42,10 +49,18 @@ const generateAdminOptions = () => {
                 }
             }, {
                 new: {
-                    before: (request) => {
+                    before: async (request) => {
+                        const { role_id, email, password } = request.payload;
+                        if(role_id == 2 || role_id == 3){
+                            const emailUtil = new Email(root_dir);
+                            await emailUtil.sendEmail(email, 'Dados de acesso ao retaguarda', 'password-email', {
+                                email,
+                                password,
+                                url: URL_FRONT
+                            })
+                        } 
+
                         request.payload.password = bcrypt.hashSync(request.payload.password, 10);
-                        // TODO: Ao criar usuário, se for gerente ou logista, enviar acesso por e-mail com usuário e senha.
-                        
                         return request;
                     }
                 },
