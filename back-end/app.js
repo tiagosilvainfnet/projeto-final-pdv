@@ -5,9 +5,12 @@ const express = require('express')
 const db = require('./db.js');
 const { generateAdminOptions } = require('./utils/adminOptions.js');
 const { User } = require('./models/User.js');
+const cors = require('cors')
 const session = require('express-session');
 require('dotenv').config();
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
+const login = require('./routes/login.js');
+const user = require('./routes/user.js');
 
 const {
     DB_NAME,
@@ -66,7 +69,6 @@ const start = async () => {
     {
       store: sessionStore,
       resave: true,
-      saveUnitialized: true,
       secret: 'rzXHE&BC@J1E98tZ96@&S2SnRB3pi40Y',
       cookie: {
         httpOnly: NODE_ENV === 'development',
@@ -76,8 +78,11 @@ const start = async () => {
     }
   )
 
+  app.use(cors());
   app.use(express.json())
   app.use(admin.options.rootPath, adminRouter)
+  app.use('/login', login)
+  app.use('/user', user)
 
   db.sync(() => console.log("Banco de dados rodando..."))
   app.listen(PORT, () => {
