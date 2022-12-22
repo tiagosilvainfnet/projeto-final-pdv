@@ -11,6 +11,10 @@ const userIsLoggedIn = (navigate, route) => {
     }
 }
 
+const getUser = () => {
+    return JSON.parse(window.localStorage.getItem('user'));
+}
+
 const login = async (email, password) => {
     const response = await _post('login', {
         email, password
@@ -24,5 +28,5 @@ const logout = () => {
 }
 
 export {
-    login, userIsLoggedIn, logout
+    login, userIsLoggedIn, logout, getUser
 }

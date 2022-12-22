@@ -5,7 +5,7 @@ const UserController = require('../controllers/UserController');
 userCtrl = new UserController();
 
 user.get('', async(req, res) => {
-    const users = await userCtrl.get(req.query.store_id);
+    const users = await userCtrl.get(req.query);
     
     if(users){
         res.statusCode = 200;

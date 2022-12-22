@@ -41,9 +41,12 @@ const _delete = async (endpoint, id) => {
     });
 }
 
+const fetcher = (...args) => fetch(...args).then(res => res.json())
+
 export {
     _get,
     _post,
     _patch,
     _delete,
+    fetcher
 }

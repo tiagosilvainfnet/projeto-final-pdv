@@ -24,7 +24,6 @@ const NotFound = lazy(() => import('./pages/not-found/not-found'));
 
 function App() {
   const [currentRoute, setCurrentRoute] = useState('/');
-  console.log(currentRoute)
 
   return <Router>
            { currentRoute !== '/login' ? <AppBar/> : ''}

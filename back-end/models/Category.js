@@ -15,7 +15,7 @@ const Category = db.define("category",
         },
         store_id: {
             type: DataTypes.INTEGER,
-            allowNull: true,
+            allowNull: false,
             onDelete: 'RESTRICT',
             onUpdate: 'CASCADE',
             references: {

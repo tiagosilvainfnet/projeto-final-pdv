@@ -2,15 +2,24 @@ const AdminJS = require('adminjs')
 const AdminJSExpress = require('@adminjs/express')
 const AdminJSSequelize = require('@adminjs/sequelize')
 const express = require('express')
-const db = require('./db.js');
 const { generateAdminOptions } = require('./utils/adminOptions.js');
-const { User } = require('./models/User.js');
 const cors = require('cors')
 const session = require('express-session');
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
+
+// Database
+const db = require('./db.js');
+
+// Models
+const { User } = require('./models/User.js');
+
+// Routes
 const login = require('./routes/login.js');
 const user = require('./routes/user.js');
+const product = require('./routes/product.js');
+const category = require('./routes/category.js');
+const seller = require('./routes/seller.js');
 
 const {
     DB_NAME,
@@ -81,8 +90,11 @@ const start = async () => {
   app.use(cors());
   app.use(express.json())
   app.use(admin.options.rootPath, adminRouter)
-  app.use('/login', login)
-  app.use('/user', user)
+  app.use('/api/login', login)
+  app.use('/api/user', user)
+  app.use('/api/category', category)
+  app.use('/api/product', product)
+  app.use('/api/seller', seller)
 
   db.sync(() => console.log("Banco de dados rodando..."))
   app.listen(PORT, () => {
