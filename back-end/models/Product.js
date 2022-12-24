@@ -19,11 +19,13 @@ const Product = db.define("product",
         },
         price: {
             type: DataTypes.DECIMAL(9, 4),
-            allowNull: false
+            allowNull: false,
+            defaultValue: 0.0,
         },
         promo_price: {
             type: DataTypes.DECIMAL(9, 4),
-            allowNull: true
+            allowNull: true,
+            defaultValue: 0.0,
         },
         category_id: {
             type: DataTypes.INTEGER,

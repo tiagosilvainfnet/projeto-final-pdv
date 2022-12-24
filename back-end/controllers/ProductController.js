@@ -37,6 +37,42 @@ class ProductController extends GenericController{
         throw(err)
       }
     }
+
+    async getOne(id){
+      const product = await Product.findOne({
+        where: {
+          id
+        }
+      });
+
+      const _product = product;
+      _product.price = Number(product.price).toFixed(2);
+      _product.promo_price = Number(product.promo_price).toFixed(2);
+
+      return _product;
+    }
+    
+    async add(data){
+      try{
+        await Product.create(data);
+      }catch(err){
+        console.log(err)
+        throw(err)
+      }
+    }
+  
+    async update(data, id){
+      try{
+        await Product.update(data, {
+          where: {
+            id
+          }
+        });
+      }catch(err){
+        console.log(err)
+        throw(err)
+      }
+    }
 }
 
 module.exports = ProductController

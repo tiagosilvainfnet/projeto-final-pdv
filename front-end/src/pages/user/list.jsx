@@ -26,8 +26,8 @@ const ListUser = ({ setCurrentRoute }) => {
     return <Grid container spacing={2} sx={{
         marginTop: '32px'
     }}>
-                <Grid xs={0} md={2}></Grid>
-                <Grid xs={12} md={8}>
+                <Grid xs={0} md={1} lg={2}></Grid>
+                <Grid xs={12} md={9} lg={8}>
                     <TableList 
                         limit={limit}
                         setLimit={setLimit}
