@@ -74,7 +74,6 @@ const TableList = ({ addButton, noModify, mutate, path, columns, items, title, l
         toggleModal();
     }
         
-    console.log(selectedItem)
     return <>
                 <Box>
                     <Box style={{
