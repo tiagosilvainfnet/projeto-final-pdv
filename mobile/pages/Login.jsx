@@ -1,9 +1,15 @@
+import { useState } from "react";
 import { View } from "react-native";
 import { StyleSheet } from 'react-native';
 import { Avatar } from "react-native-paper";
 import { TextField, Button } from "../components";
+import { storeData } from "../services/storage";
+import { login } from "../services/auth";
 
-const Login = () => {
+const Login = ({ navigation, route }) => {
+    const [email, setEmail] = useState('tiagoluizribeirodasilva@gmail.com');
+    const [password, setPassword] = useState('123');
+
     return <View style={styles.container}>
         <View style={styles.containerBg}></View>
         <View style={styles.bodyLogin}>
@@ -19,6 +25,8 @@ const Login = () => {
                     mode="flat"
                     label="E-mail"
                     iconLeft="email"
+                    value={email}
+                    onChangeText={text => setEmail(text)}
                 />
             </View>
             <View style={styles.containerInput}>
@@ -28,12 +36,26 @@ const Login = () => {
                     label="Senha"
                     iconLeft="lock"
                     secureTextEntry={true}
+                    value={password}
+                    onChangeText={text => setPassword(text)}
                 />
             </View>
             <Button 
                 style={styles.button}
                 label="Entrar"
-                onPress={() => console.log("Entrar")}
+                onPress={async () => {
+                    try{
+                        const response = await login(email, password);
+                        if(response.status === 200){
+                            route.params.setUserIsLoggedIn(true);
+                            await storeData('user', response.data, true);
+                        }else{
+                            alert('Usuário ou senha inválidos');
+                        }
+                    }catch(e){
+                        alert('Usuário ou senha inválidos');
+                    }
+                }}
                 icon="login"
             />
         </View>
