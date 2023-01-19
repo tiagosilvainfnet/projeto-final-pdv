@@ -15,12 +15,15 @@ const storeData  = async (key, value, parse=false) => {
     }
 }
 
-const getData = async (key) => {
+const getData = async (key, parse=false) => {
   try {
-      const value = await AsyncStorage.getItem(key)
+      let value = await AsyncStorage.getItem(key)
       if(value !== null && value !== undefined) {
-        return value;
+        if(parse){
+          value = JSON.parse(value)
+        }
       }
+      return value
     } catch(e) {
       // error reading value
     }

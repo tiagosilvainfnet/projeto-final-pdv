@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const { Product } = require('../models/Product.js');
 const GenericController = require('./GenericController.js');
 
@@ -7,15 +8,26 @@ class ProductController extends GenericController{
     }
 
     async get(query){
-      const { store_id, limit, page } = query;
+      const { store_id, limit, page, search } = query;
       const paginate = this.generatePagination(limit, page)
 
+      let where = {
+          store_id          
+      }
+
+      if(search){
+        // Adicione um operador Or para pesquisar por nome e ean
+        where = {
+          [Op.or]: [
+            { name: { [Op.like]: `%${search}%` } },
+            { ean: { [Op.like]: `%${search}%` } }
+          ]
+        }
+      }
       
       const count = await Product.count();
       const product = await Product.findAll({
-        where: {
-          store_id
-        },
+        where,
         ...paginate
       });
 

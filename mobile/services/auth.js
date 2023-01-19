@@ -10,8 +10,12 @@ const login = async (email, password) => {
     };
 }
 
+const getUser = async () => {
+    return await getData('user', true);
+}
+
 const verifyUserIsLoggedIn = async () => {
-    const user = await getData('user');
+    const user = await getData('user', true);
     return user !== null && user !== undefined;
 }
 
