@@ -2,7 +2,7 @@ import { get } from "./request"
 
 const getProduct = async (store_id, page, search) => {
     let params = {
-        limit: 15,
+        limit: 20,
         page,
         store_id
     }

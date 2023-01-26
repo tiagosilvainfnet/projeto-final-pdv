@@ -10,6 +10,8 @@ import { lightTheme, darkTheme } from './theme';
 import Panel from './pages/Panel';
 import Login from './pages/Login';
 import Sale from './pages/Sale';
+import CupomList from './pages/CupomList';
+import CupomItem from './pages/CupomItem';
 import { verifyUserIsLoggedIn, logout } from './services/auth';
 import { Switch } from 'react-native-paper';
 import { getData, storeData } from './services/storage';
@@ -73,6 +75,18 @@ export default function App() {
                   headerRight: rightButton
                 }}
                 component={Sale} />
+              <Stack.Screen 
+                name="CupomList" 
+                options={{
+                  headerRight: rightButton
+                }}
+                component={CupomList} />
+              <Stack.Screen 
+                name="CupomItem" 
+                options={{
+                  headerRight: rightButton
+                }}
+                component={CupomItem} />
             </>
            : <Stack.Screen 
            initialParams={{ setUserIsLoggedIn }}
