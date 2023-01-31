@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL_API='http://192.168.68.102:3001/api/v1';
+const BASE_URL_API='http://localhost:3001/api/v1';
 const headers = {
     'Content-Type': 'application/json'
 }

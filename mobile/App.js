@@ -63,12 +63,12 @@ export default function App() {
         {
           userIsLoggedIn ? 
             <>
-              <Stack.Screen 
-                name="Panel" 
-                component={Panel} 
-                options={{
-                  headerRight: rightButton
-                }}/>
+            <Stack.Screen 
+              name="Panel" 
+              component={Panel} 
+              options={{
+                headerRight: rightButton
+              }}/>
               <Stack.Screen 
                 name="Sale" 
                 options={{

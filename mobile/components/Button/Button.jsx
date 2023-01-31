@@ -1,24 +1,28 @@
 import { Button } from 'react-native-paper';
 import PropTypes from 'prop-types';
+import { View } from 'react-native';
 
-const ButtonLocal = ({ style, mode, onPress, label, icon, disabled }) => {
+const ButtonLocal = ({ style, mode, onPress, label, icon, disabled, value }) => {
     return <Button 
-                disabled={disabled}
-                icon={icon} 
-                mode={mode}
-                style={style}
-                onPress={onPress}>
-                {label}
-            </Button>;
+    disabled={disabled}
+    icon={icon} 
+    mode={mode}
+    style={style}
+    value={value}
+    onPress={onPress}>
+    {label}
+</Button>
+    
 }
 
 ButtonLocal.defaultProps = {
     mode: "contained",
     label: "",
-    onPress: () => console.log(""),
+    onPress: null,
     icon: null,
     style: {},
     disabled: false,
+    value: null,
 }
 
 ButtonLocal.prototype = {   
@@ -28,6 +32,7 @@ ButtonLocal.prototype = {
     icon: PropTypes.string,
     style: PropTypes.object,
     disabled: PropTypes.bool,
+    value: PropTypes.any,
 }
 
 export default ButtonLocal;
