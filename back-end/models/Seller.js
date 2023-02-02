@@ -17,6 +17,11 @@ const SellerItem = db.define("seller_item",
             type: DataTypes.DECIMAL(9, 4),
             allowNull: true
         },
+        quantity: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 1
+        },
         seller_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -40,6 +45,35 @@ const SellerItem = db.define("seller_item",
     }
 )
 
+const SellerPaymentType = db.define("seller_payment_type", 
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false
+        },
+        value: {
+            type: DataTypes.DECIMAL(9, 4),
+            allowNull: false
+        },
+        type: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        seller_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            onDelete: 'RESTRICT',
+            onUpdate: 'CASCADE',
+            references: {
+                model: 'sellers',
+                key: 'id'
+            }
+        },
+    }
+)
+
 const Seller = db.define("seller", 
     {
         id: {
@@ -53,15 +87,15 @@ const Seller = db.define("seller",
             allowNull: false,
             defaultValue: 0.0
         },
-        discount: {
+        payed_value: {
             type: DataTypes.DECIMAL(9, 4),
             allowNull: true,
             defaultValue: 0.0
         },
-        type: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            defaultValue: 1
+        troco: {
+            type: DataTypes.DECIMAL(9, 4),
+            allowNull: true,
+            defaultValue: 0.0
         },
         store_id: {
             type: DataTypes.INTEGER,
@@ -86,4 +120,4 @@ const Seller = db.define("seller",
     }
 )
 
-module.exports = { Seller, SellerItem }
+module.exports = { Seller, SellerItem, SellerPaymentType }

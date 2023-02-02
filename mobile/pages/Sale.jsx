@@ -24,12 +24,45 @@ const Sale = ({
     }, [cart]);
 
     useEffect(() => {
+        if(payments.length == 0) {
+            setTroco(0.00);
+            return;
+        }
         let troco = payments.reduce((acc, curr) => {
             return acc + curr.value;
         }, 0) - total;
         setTroco(troco);
     }, [payments]);
-    
+
+    const removerPagamento = (type) => {
+        setPayments((_v) => {
+            let idx = _v.findIndex((v) => v.type == type);
+            _v.splice(idx, 1);
+            return [..._v];
+        });
+    }
+
+    const getIcon = (type) => {
+        switch(type) {
+            case 1:
+                return 'cash';
+            case 2:
+                return 'qrcode';
+            case 3:
+                return 'credit-card-chip';
+            case 4:
+                return 'credit-card';
+            default:
+                return 'folder';
+        }
+    }
+
+    const finalizarCompra = () => {
+        console.log(total)
+        console.log(payments)
+        console.log(cart)
+        console.log(troco)
+    }
 
     return <View style={styles.container}>
                 <View style={styles.left}>
@@ -44,28 +77,31 @@ const Sale = ({
                     </View>
                     <View>
                         {
-                            // TODO: Remover pagamento
                             // TODO: Ícone por tipo de pagamento
                             payments.length > 0 ? payments.map((payment, idx) => {
                                 return <List.Item
-                                            onPress={() => {console.log('Remover pagamento')}}
+                                            onPress={() => {removerPagamento(payment.type)}}
                                             key={idx}
                                             title={payment.name}
-                                            left={props => <List.Icon {...props} icon="folder" />}
+                                            left={props => <List.Icon {...props} icon={getIcon(payment.type)} />}
                                             right={props => <Text>{ new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(payment.value)}</Text>}
                                         />
                             }) : null
                         }
 
-                        <List.Item
-                            title="Troco"
-                            left={props => <List.Icon {...props} icon="folder" />}
-                            right={props => <Text>{ new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(troco)}</Text>}
-                        />
+                        {
+                            payments.length > 0 ? <List.Item
+                                title={troco >= 0 ? "Troco" : "Falta"}
+                                left={props => <List.Icon {...props} icon={troco >= 0 ? "currency-usd" : "currency-usd-off"} />}
+                                right={props => <Text>{ new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(troco)}</Text>}
+                            /> : null
+                        }
                         <List.Item
                             title="Total"
-                            left={props => <List.Icon {...props} icon="folder" />}
-                            right={props => <Text>{ new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)}</Text>}
+                            left={props => <List.Icon {...props} icon="cash-multiple" />}
+                            right={props => <Text style={{
+                                fontWeight: 'bold',
+                            }}>{ new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)}</Text>}
                         />
                     </View>
                     <View style={{
@@ -80,10 +116,10 @@ const Sale = ({
                                 storeData('cart', [], true);
                             }} label="Cancelar"/>
                             <Button
-                                disabled={cart.length == 0} 
+                                disabled={cart.length == 0 || (troco < 0 && payments.length > 0) || payments.length == 0} 
                                 style={{...styles.button}} 
                                 mode="contained" 
-                                onPress={() => {}} label="Finalizar compra"/>
+                                onPress={finalizarCompra} label="Finalizar compra"/>
                         </View>
                 </View>
             </View>

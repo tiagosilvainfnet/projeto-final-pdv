@@ -4,7 +4,7 @@ const { User } = require('../models/User.js');
 const { Client, ClientStore } = require('../models/Client.js');
 const { Category } = require('../models/Category.js');
 const { Product } = require('../models/Product.js');
-const { Seller, SellerItem } = require('../models/Seller.js');
+const { Seller, SellerItem, SellerPaymentType } = require('../models/Seller.js');
 const bcrypt = require("bcryptjs");
 
 const Email = require('../utils/Email');
@@ -88,6 +88,7 @@ const generateAdminOptions = (root_dir) => {
             generateResource(Product),
             generateResource(Seller),
             generateResource(SellerItem),
+            generateResource(SellerPaymentType)
         ],
     }
 }

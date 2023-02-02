@@ -4,7 +4,8 @@ import { StyleSheet, Text, View } from "react-native";
 const CupomItem = ({
     route
 }) => {
-    const cupom = useState(route.params);
+    const cupom = route.params;
+    console.log(cupom)
 
     return <View style={styles.container}><Text>Cupom Item</Text></View>
 }
