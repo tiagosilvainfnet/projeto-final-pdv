@@ -64,6 +64,12 @@ export default function App() {
           userIsLoggedIn ? 
             <>
             <Stack.Screen 
+              name="CupomItem" 
+              options={{
+                headerRight: rightButton
+              }}
+              component={CupomItem} />
+            <Stack.Screen 
               name="Panel" 
               component={Panel} 
               options={{
@@ -81,12 +87,6 @@ export default function App() {
                   headerRight: rightButton
                 }}
                 component={CupomList} />
-              <Stack.Screen 
-                name="CupomItem" 
-                options={{
-                  headerRight: rightButton
-                }}
-                component={CupomItem} />
             </>
            : <Stack.Screen 
            initialParams={{ setUserIsLoggedIn }}

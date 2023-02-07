@@ -1,16 +1,12 @@
-import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import Cupom from "../components/Cupom/Cupom";
 
 const CupomItem = ({
     route
 }) => {
     const cupom = route.params;
-    console.log(cupom)
 
-    return <View style={styles.container}><Text>Cupom Item</Text></View>
+    return <Cupom cupom={cupom}/>
 }
 
-
-const styles = StyleSheet.create({});
 
 export default CupomItem;
