@@ -23,6 +23,19 @@ class SellerController extends GenericController{
       count
     };
   }
-}
+
+  async getSellerById(id){
+    // TODO: Fazer com que os dados sejam recuperados
+    const count = 10;
+
+    return {
+      rows: {
+        products: [{},{},{},{},{},{}],
+        formas: [{},{},{}],
+        loja: {}
+      },
+      count
+    };
+  }}
 
 module.exports = SellerController

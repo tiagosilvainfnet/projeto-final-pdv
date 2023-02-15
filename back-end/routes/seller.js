@@ -16,4 +16,16 @@ seller.get('', async(req, res) => {
     res.send({})
 })
 
+seller.get('/:id', async(req, res) => {
+    const seller = await sellerCtrl.getSellerById(req.params.id);
+    
+    if(seller){
+        res.statusCode = 200;
+        res.send(seller)
+        return;
+    }
+    res.statusCode = 404;
+    res.send({})
+})
+
 module.exports = seller;

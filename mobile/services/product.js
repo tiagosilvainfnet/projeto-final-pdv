@@ -25,6 +25,11 @@ const getCupom = async (store_id, page) => {
     return result.data.rows
 }
 
+const getCupomData = async (id) => {
+    const result = await get(`seller/${id}`, {})
+    return result.data.rows
+}
+
 export {
-    getProduct, getCupom
+    getProduct, getCupom, getCupomData
 }
