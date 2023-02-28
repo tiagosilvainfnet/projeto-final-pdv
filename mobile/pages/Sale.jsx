@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { List } from "react-native-paper";
 import { Button, Calculator, ProductCart } from "../components";
+import { venda } from "../services/product";
 import { storeData } from "../services/storage";
 
 const Sale = ({
@@ -58,10 +59,13 @@ const Sale = ({
     }
 
     const finalizarCompra = () => {
-        console.log(total)
-        console.log(payments)
-        console.log(cart)
-        console.log(troco)
+        try{
+            venda(total, payments, cart, troco);
+            alert("Venda finalizada com sucesso!");
+            navigation.navigate('Panel')
+        }catch(err){
+            alert("Erro ao finalizar venda!");
+        }
     }
 
     return <View style={styles.container}>

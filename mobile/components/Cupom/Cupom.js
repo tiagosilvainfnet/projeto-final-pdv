@@ -21,6 +21,19 @@ Font.register({
     ],
 })
 
+const getTypePayment = (type) => {
+    switch (type) {
+        case 1:
+            return 'Dinheiro';
+        case 2:
+            return 'PIX';
+        case 3:
+            return 'Débito';
+        case 4:
+            return 'Crédito';
+        }
+}
+
 const zoom = 0.5;
 
 
@@ -77,6 +90,12 @@ const stylesPage = StyleSheet.create({
         flexDirection: 'column'
     },
     text: {
+        fontSize: 14,
+    },
+    title_price: {
+        fontSize: 14,
+    },
+    text_price: {
         fontSize: 14,
     },
     danfeTitle: {
@@ -147,7 +166,9 @@ const stylesPage = StyleSheet.create({
 const stylesPrint = StyleSheet.create({
     ...stylesPage,
     body: {
-        backgroundColor: 'transparent'
+        ...stylesPage.body,
+        backgroundColor: 'transparent',
+        maxWidth: '40%',
     },
     danfeTitle: {
         fontSize: stylesPage.danfeTitle.fontSize * zoom,
@@ -157,12 +178,39 @@ const stylesPrint = StyleSheet.create({
     },
     text: {
         fontSize: stylesPage.text.fontSize * zoom,
-    }
+    },
+    title_price: {
+        fontSize: stylesPage.title_price.fontSize * zoom,
+    },
+    text_price: {
+        fontSize: stylesPage.text_price.fontSize * zoom,
+    },
 });
 
 const Cupom = ({ cupom }) => {
+    const [products, setProducts] = useState([]);
+    const [formas, setFormas] = useState([]);
+    const [loja, setLoja] = useState({});
+    
+    const loadDatas = async () => {
+        let cupomData = await getCupomData(cupom.id);
+        setProducts(cupomData.products)
+        setFormas(cupomData.formas)
+        setLoja(cupomData.loja)
+    }
+
+    useEffect(() => {
+        loadDatas();
+    }, []);
+
     const printPdf = async () => {
-        await printDoc(<CupomPdf cupom={cupom} styles={stylesPrint} _print={true}/>)
+        await printDoc(<CupomPdf 
+            cupom={cupom} 
+            styles={stylesPrint} 
+            _print={true} 
+            products={products}
+            formas={formas}
+            loja={loja}/>)
     }
 
     const sendPdfB64 = (b64) => {
@@ -170,7 +218,14 @@ const Cupom = ({ cupom }) => {
     }
 
     const save = async () => {
-        await savePdf(<CupomPdf cupom={cupom} styles={stylesPrint} _print={true}/>, sendPdfB64);
+        await savePdf(<CupomPdf 
+            cupom={cupom} 
+            styles={stylesPrint} 
+            _print={true}
+            products={products}
+            formas={formas}
+            loja={loja}
+        />, sendPdfB64);
     }
 
     return <>
@@ -181,7 +236,7 @@ const Cupom = ({ cupom }) => {
         }}>
             <View style={{
                 display: 'flex',
-                maxWidth: '30%',
+                maxWidth: '40%',
                 flexDirection: 'column',
             }}>
                 <Button
@@ -196,32 +251,20 @@ const Cupom = ({ cupom }) => {
                     }}
                     icon="printer"
                 />
-                <CupomPdf cupom={cupom} styles={stylesPage} _print={false}/>
+                <CupomPdf 
+                cupom={cupom} 
+                styles={stylesPage} 
+                _print={false}
+                products={products}
+                formas={formas}
+                loja={loja}
+                />
             </View>
         </View>
     </>
 }
 
-const CupomPdf = ({ cupom, styles, _print }) => {
-    
-    const [products, setProducts] = useState([]);
-    const [formas, setFormas] = useState([]);
-    const [loja, setLoja] = useState({});
-    
-    cupom = {"id":1,"total":"99.9000","payed_value":"150.0000","troco":"50.1000","store_id":1,"employee_id":11,"createdAt":"2022-12-21T23:54:31.000Z","updatedAt":"2023-02-02T22:52:57.000Z"}
-
-    const loadDatas = async () => {
-        let cupomData = await getCupomData(cupom.id);
-        setProducts(cupomData.products)
-        setFormas(cupomData.formas)
-        setLoja(cupomData.loja)
-    }
-
-
-    useEffect(() => {
-        loadDatas();
-    }, []);
-
+const CupomPdf = ({ cupom, styles, _print, products, formas, loja}) => {
     return <>
         <Document>
             <Page size="A4" style={styles.page}>
@@ -244,7 +287,13 @@ const CupomPdf = ({ cupom, styles, _print }) => {
                             }}>
                                 <View>
                                     {
-                                    _print ? <Image src={logo_nfce} height={'50px'} width={'50px'} /> : <View style={{
+                                    _print ? <View style={{
+                                        width: '50px',
+                                        height: '50px',
+                                        display: 'flex'
+                                    }}>
+                                        <Image src={logo_nfce} height={'50px'} width={'50px'} />
+                                    </View> : <View style={{
                                         width: '50px',
                                         height: '50px',
                                         backgroundImage: `url(${logo_nfce})`,
@@ -276,7 +325,7 @@ const CupomPdf = ({ cupom, styles, _print }) => {
                                 ...styles.productItem,
                                 ...styles.boxProduct,
                                 ...styles.width15
-                            }}><Text style={styles.text}>Código</Text></View>
+                            }}><Text style={styles.text}>Cód.</Text></View>
                             <View style={{
                                 display: 'flex',
                                 ...styles.productItem,
@@ -303,12 +352,49 @@ const CupomPdf = ({ cupom, styles, _print }) => {
                             }}><Text style={styles.text}>Total</Text></View>
                         </View>
                         <View style={styles.product_body}>
+                            <View style={styles.product_item}>
+                                <View style={{
+                                    display: 'flex',
+                                    ...styles.productFirstItem,
+                                    ...styles.productItem,
+                                    ...styles.boxProduct,
+                                    ...styles.width15,
+                                }}><Text style={styles.text}>00001</Text></View>
+                                <View  style={{
+                                    display: 'flex',
+                                    ...styles.productItem,
+                                    ...styles.boxProduct,
+                                    ...styles.width40,
+                                }}><Text style={styles.text}>Produto 1</Text></View>
+                                <View  style={{
+                                    display: 'flex',
+                                    ...styles.productItem,
+                                    ...styles.boxProduct,
+                                    ...styles.width15,
+                                }}><Text style={styles.text}>1</Text></View>
+                                <View  style={{
+                                    display: 'flex',
+                                    ...styles.productItem,
+                                    ...styles.boxProduct,
+                                    ...styles.width15,
+                                }}><Text style={styles.text}>19,99</Text></View>
+                                <View  style={{
+                                    display: 'flex',
+                                    ...styles.productItem,
+                                    ...styles.boxProduct,
+                                    ...styles.width15,
+                                }}><Text style={styles.text}>19,99</Text></View>
+                            </View>
                             {
                                 products.length > 0 ? products.map((product, idx) => {
                                     let lastRow = products.length - 1 === idx;
                                     let localLastRow = {}
                                     if(lastRow){
                                         localLastRow = styles.productLastRow
+                                    }
+                                    let price = product.price;
+                                    if(product.promo_price){
+                                        price = product.promo_price;
                                     }
 
                                     return <View style={styles.product_item}>
@@ -319,85 +405,115 @@ const CupomPdf = ({ cupom, styles, _print }) => {
                                                     ...styles.boxProduct,
                                                     ...styles.width15,
                                                     ...localLastRow
-                                                }}><Text style={styles.text}>00001</Text></View>
+                                                }}><Text style={styles.text}>{product.id}</Text></View>
                                                 <View  style={{
                                                     display: 'flex',
                                                     ...styles.productItem,
                                                     ...styles.boxProduct,
                                                     ...styles.width40,
                                                     ...localLastRow
-                                                }}><Text style={styles.text}>Produto 1</Text></View>
+                                                }}><Text style={styles.text}>{product.name}</Text></View>
                                                 <View  style={{
                                                     display: 'flex',
                                                     ...styles.productItem,
                                                     ...styles.boxProduct,
                                                     ...styles.width15,
                                                     ...localLastRow
-                                                }}><Text style={styles.text}>1</Text></View>
+                                                }}><Text style={styles.text}>{product.quantity}</Text></View>
                                                 <View  style={{
                                                     display: 'flex',
                                                     ...styles.productItem,
                                                     ...styles.boxProduct,
                                                     ...styles.width15,
                                                     ...localLastRow
-                                                }}><Text style={styles.text}>19,99</Text></View>
+                                                }}><Text style={styles.text}>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price)}</Text></View>
                                                 <View  style={{
                                                     display: 'flex',
                                                     ...styles.productItem,
                                                     ...styles.boxProduct,
                                                     ...styles.width15,
                                                     ...localLastRow
-                                                }}><Text style={styles.text}>19,99</Text></View>
+                                                }}><Text style={styles.text}>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price * product.quantity)}</Text></View>
                                             </View>
                                 }) : null
                             }
                         </View>
                         <View style={styles.pagamentos}>
                             <View style={styles.pagamento_box}>
-                                <View>QTD. TOTAL DE ITENS</View>
-                                <View>{products.length}</View>
+                                <View>
+                                    <Text style={styles.title_price}>QTD. TOTAL DE ITENS</Text>
+                                </View>
+                                <View>
+                                    <Text style={styles.text_price}>{products.length}</Text>
+                                </View>
                             </View>
                             <View style={styles.pagamento_box}>
-                                <View>VALOR TOTAL</View>
-                                <View>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(cupom.total)}</View>
+                                <View>
+                                    <Text style={styles.title_price}>VALOR TOTAL</Text>
+                                </View>
+                                <View>
+                                    <Text style={styles.text_price}>
+                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(cupom.total)}
+                                    </Text>
+                                </View>
                             </View>
                             <View style={styles.pagamento_box}>
-                                <View>VALOR PAGO</View>
-                                <View>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(cupom.payed_value)}</View>
+                                <View>
+                                    <Text style={styles.title_price}>
+                                    VALOR PAGO
+                                    </Text>
+                                </View>
+                                <View>
+                                    <Text style={styles.text_price}>
+                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(cupom.payed_value)}
+                                    </Text>
+                                </View>
                             </View>
                             <View style={styles.pagamento_box}>
-                                <View>TROCO</View>
-                                <View>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(cupom.troco)}</View>
+                                <View style={styles.title_price}>
+                                    <Text style={styles.title_price}>
+                                    TROCO
+                                    </Text>
+                                </View>
+                                <View>
+                                    <Text style={styles.text_price}>
+                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(cupom.troco)}
+                                    </Text>
+                                </View>
                             </View>
                             <View style={{
                                 ...styles.pagamento_box,
                                 marginTop: 5
                             }}>
-                                <View>FORMAS DE PAGAMENTO</View>
-                                <View>VALOR PAGO</View>
+                                <View><Text style={styles.title_price}>FORMAS DE PAGAMENTO</Text></View>
+                                <View><Text style={styles.title_price}>VALOR PAGO</Text></View>
                             </View>
                             {
                                 formas.length > 0 ? formas.map((forma, idx) => {
                                     return <View style={styles.pagamento_box}>
-                                        <View>{idx + 1} - Dinheiro</View>
-                                        <View>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(cupom.troco)}</View>
+                                        <View><Text style={styles.text_price}>{idx + 1} - {getTypePayment(forma.type)}</Text></View>
+                                        <View><Text style={styles.text_price}>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(forma.value)}</Text></View>
                                     </View>
                                 }) : null
                             }
                         </View>
                         <View style={styles.cupom_id}>
                             <View style={styles.id_box}>
-                                <View>Nº</View>
-                                <View>000{cupom.id}</View>
+                                <View><Text style={styles.text_price}>Nº</Text></View>
+                                <View><Text style={styles.text_price}>000{cupom.id}</Text></View>
                             </View>
                             <View style={styles.id_box}>
-                                <View>Data emissão</View>
-                                <View>{moment(cupom.createdAt).format('DD/MM/YYYY HH:mm:ss')}</View>
+                                <View><Text style={styles.text_price}>Data emissão</Text></View>
+                                <View><Text style={styles.text_price}>{moment(cupom.createdAt).format('DD/MM/YYYY HH:mm:ss')}</Text></View>
                             </View>
                         </View>
                         <View style={styles.qrcode}>  
                             {
-                                _print ? <Image src={qrcode_image_jpg} height={'auto'} width={'70%'} /> : <View style={{
+                                _print ? <View style={{
+                                    width:'94.5px',
+                                    height: '94.5px',
+                                    display: 'flex'
+                                }}><Image src={qrcode_image_jpg} height={'auto'} width={'70%'} /></View> : <View style={{
                                     width: '200px',
                                     height: '200px',
                                     backgroundImage: `url(${qrcode_image_png})`,

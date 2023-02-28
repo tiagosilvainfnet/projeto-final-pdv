@@ -28,4 +28,13 @@ seller.get('/:id', async(req, res) => {
     res.send({})
 })
 
+seller.post('', async(req, res) => {
+    try{
+        await sellerCtrl.create(req.body);
+        res.send({'msg': 'Venda realizada com sucesso!', status: 200})
+    }catch(err){
+        res.send({'msg': `Erro ao realizar venda. Erro ${err}`, status: 400})
+    }
+})
+
 module.exports = seller;

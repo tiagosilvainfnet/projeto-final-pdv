@@ -1,4 +1,5 @@
-import { get } from "./request"
+import { get, post } from "./request"
+import { getData } from "./storage";
 
 const getProduct = async (store_id, page, search) => {
     let params = {
@@ -30,6 +31,25 @@ const getCupomData = async (id) => {
     return result.data.rows
 }
 
+const venda = async (total, payments, cart, troco) => {
+    const user = await getData('user', true);
+
+    const response = await post('seller', { 
+        total, 
+        payments, 
+        cart, 
+        troco,
+        employee_id: user.id,
+        store_id: user.store_id
+    });
+    
+    const { data, status } = response;
+    return {
+        data,
+        status
+    };
+}
+
 export {
-    getProduct, getCupom, getCupomData
+    getProduct, getCupom, getCupomData, venda
 }
