@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { IconButton, Provider as PaperProvider } from 'react-native-paper';
-
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+
+import NetInfo from '@react-native-community/netinfo';
 
 import { lightTheme, darkTheme } from './theme';
 
@@ -12,15 +13,34 @@ import Login from './pages/Login';
 import Sale from './pages/Sale';
 import CupomList from './pages/CupomList';
 import CupomItem from './pages/CupomItem';
-import { verifyUserIsLoggedIn, logout } from './services/auth';
+import { logout } from './services/auth';
 import { Switch } from 'react-native-paper';
 import { getData, storeData } from './services/storage';
+import { getSync, pushSync } from './services/sync';
+// import { create, select } from './schemas/persist';
 
 const Stack = createStackNavigator();
 
 export default function App() {
-  const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
   const [mode, setMode] = useState('light');
+
+  useEffect(() => {
+    const handleConnection = async (state) => {
+      if(state.isConnected){
+        getSync();
+        pushSync();
+      }
+    }
+  
+    const unsubscribe = NetInfo.addEventListener(handleConnection);
+
+    // create('category', {id: 1, name: 'teste', store_id: 1});
+    // select('category');
+
+    return () => {
+      unsubscribe();
+    }
+  }, []);
 
   const rightButton = () => {
     return (
@@ -38,7 +58,7 @@ export default function App() {
           icon="exit-to-app"
           style={styles.rightElements}
           size={20}
-          onPress={() => logout(setUserIsLoggedIn)}
+          onPress={() => logout()}
         />
       </View>
     );
@@ -49,9 +69,6 @@ export default function App() {
   }, []);
 
   const initApp = async () => {
-    const userIsLoggedIn = await verifyUserIsLoggedIn();
-    setUserIsLoggedIn(userIsLoggedIn);
-
     const mode = await getData('mode');
     setMode(mode);
   }
@@ -59,43 +76,37 @@ export default function App() {
   return (
     <PaperProvider theme={mode === 'light' ? lightTheme : darkTheme}>
       <NavigationContainer>
-      <Stack.Navigator>
-        {
-          userIsLoggedIn ? 
-            <>
-            <Stack.Screen 
-              name="Panel" 
-              component={Panel} 
-              options={{
-                headerRight: rightButton
-              }}/>
-              <Stack.Screen 
-                name="Sale" 
-                options={{
-                  headerRight: rightButton
-                }}
-                component={Sale} />
-              <Stack.Screen 
-                name="CupomList" 
-                options={{
-                  headerRight: rightButton
-                }}
-                component={CupomList} />
-                <Stack.Screen 
-                  name="CupomItem" 
-                  options={{
-                    headerRight: rightButton
-                  }}
-                  component={CupomItem} />
-            </>
-           : <Stack.Screen 
-           initialParams={{ setUserIsLoggedIn }}
-           name="Login" component={Login} options={{
-              headerShown: false
-           }}/>
-        }
-      </Stack.Navigator>
-    </NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen 
+          name="Login" component={Login} options={{
+            headerShown: false
+          }}/>
+          <Stack.Screen 
+            name="Panel" 
+            component={Panel} 
+            options={{
+              headerRight: rightButton
+          }}/>
+          <Stack.Screen 
+            name="Sale" 
+            options={{
+              headerRight: rightButton
+            }}
+            component={Sale} />
+          <Stack.Screen 
+            name="CupomList" 
+            options={{
+              headerRight: rightButton
+            }}
+            component={CupomList} />
+          <Stack.Screen 
+            name="CupomItem" 
+            options={{
+              headerRight: rightButton
+            }}
+            component={CupomItem} />
+        </Stack.Navigator>
+      </NavigationContainer>
     </PaperProvider>
   );
 }

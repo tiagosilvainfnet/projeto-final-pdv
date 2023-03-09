@@ -99,7 +99,7 @@ const start = async () => {
 
   db.sync(() => console.log("Banco de dados rodando..."))
   app.listen(PORT, () => {
-    console.log(`AdminJS started on http://localhost:${PORT}${admin.options.rootPath}`)
+    console.log(`AdminJS started on http://192.168.68.104:${PORT}${admin.options.rootPath}`)
   })
 }
 

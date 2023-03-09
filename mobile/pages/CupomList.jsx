@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, SafeAreaView, ScrollView, Text, View, StatusBar } from "react-native";
+import { StyleSheet, SafeAreaView, ScrollView, Text, View, StatusBar, Dimensions } from "react-native";
 import { Badge, List, useTheme } from "react-native-paper";
 import { getCupom } from "../services/product";
 import { getData } from "../services/storage";
 import moment from 'moment';
+import { printToFileAsync, printAsync } from "expo-print";
+import { shareAsync } from 'expo-sharing';
+import { generateHTMLDoc } from "../services/react-pdf-expo";
+import { CupomPdf } from "../components";
+import "intl";
+import "intl/locale-data/jsonp/en";
 
 const CupomList = ({ navigation }) => {
     const [cupons, setCupons] = useState([]);
@@ -42,12 +48,40 @@ const CupomList = ({ navigation }) => {
         init();
     }, []);
 
-    const viewCupom = (cupom) => {
-        navigation.navigate('CupomItem', cupom)
+    const viewCupom = async (cupom) => {
+        const cupomPdf = CupomPdf({
+            cupom: {
+              id: 1,
+              data: '2023-03-03',
+              total: 9.99,
+              payed_value: 9.99,
+              troco: 0.00,
+            },
+            products: [],
+            formas: [],
+            loja: [],
+          });
+        const rcphtml = generateHTMLDoc(cupomPdf);
+        // console.log(rcphtml);
+        const { uri } = await printToFileAsync({ html: rcphtml });
+        // // console.log("File has been saved to:", uri);
+        // await shareAsync(uri, { UTI: ".pdf", mimeType: "application/pdf" });
+        await printAsync(
+            {
+                uri,
+            },
+            {
+                printerUrl: "printer:/local",
+                dialogTitle: "Print Document",
+                numberOfCopies: 1,
+                orientation: "portrait",
+                usePrinter: true
+            }
+        );
     }
 
     return <View style={styles.container}>
-        <List.Section style={{width: "100%"}}>
+        <List.Section style={{width: Dimensions.get('window').width}}>
             <SafeAreaView style={styles.container_scroll}>
                 <ScrollView 
                     onScroll={detectScroll}
@@ -56,7 +90,7 @@ const CupomList = ({ navigation }) => {
                 cupons ? cupons?.map((cupom, idx) => {
                     return <List.Item 
                         key={idx}
-                        onPress={() => viewCupom(cupom)}
+                        onPress={async () => await viewCupom(cupom)}
                         title={moment(cupom.createdAt).format('DD/MM/YYYY HH:mm')}
                         left={() => <List.Icon icon="ticket-percent" />} 
                         right={() => <View styles={styles.rightButtons}>
@@ -80,10 +114,10 @@ const styles = StyleSheet.create({
     container_scroll: {
         flex: 1,
         paddingTop: StatusBar.currentHeight,
-        width: '100%'
+        width: Dimensions.get('window').width
     },
     scrollView: {
-        height: 'calc(100vh - 100px)',
+        height: Dimensions.get('window').height - 120,
         marginHorizontal: 20,
     },
     container: {
@@ -91,7 +125,7 @@ const styles = StyleSheet.create({
       backgroundColor: '#fff',
       flexDirection: 'row',
       alignItems: 'space-between',
-      width: '100%'
+      width: Dimensions.get('window').width
     },
     rightButtons: {
       display: 'flex',

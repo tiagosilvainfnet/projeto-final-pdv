@@ -1,3 +1,4 @@
+import { dropTables } from './persist';
 import { post } from './request';
 import { clearData, getData } from './storage';
 
@@ -19,9 +20,9 @@ const verifyUserIsLoggedIn = async () => {
     return user !== null && user !== undefined;
 }
 
-const logout = (setUserIsLoggedIn) => {
+const logout = () => {
     clearData();
-    setUserIsLoggedIn(false);   
+    dropTables();
 }
 
 export {

@@ -1,14 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View } from "react-native";
 import { StyleSheet } from 'react-native';
 import { Avatar } from "react-native-paper";
 import { TextField, Button } from "../components";
 import { storeData } from "../services/storage";
-import { login } from "../services/auth";
+import { login, verifyUserIsLoggedIn } from "../services/auth";
+import { createTables } from "../services/persist";
 
 const Login = ({ navigation, route }) => {
     const [email, setEmail] = useState('tiagoluizribeirodasilva@gmail.com');
     const [password, setPassword] = useState('123');
+    
+    const init = async () => {
+        const userIsLoggedIn = await verifyUserIsLoggedIn();
+        if(userIsLoggedIn){
+            navigation.navigate('Panel');
+        }
+    }
+
+    useEffect(() => {
+        init()
+    }, []);
+
 
     return <View style={styles.container}>
         <View style={styles.containerBg}></View>
@@ -46,13 +59,16 @@ const Login = ({ navigation, route }) => {
                 onPress={async () => {
                     try{
                         const response = await login(email, password);
+                        console.log(response)
                         if(response.status === 200){
-                            route.params.setUserIsLoggedIn(true);
+                            navigation.navigate('Panel');
                             await storeData('user', response.data, true);
+                            createTables();
                         }else{
                             alert('Usuário ou senha inválidos');
                         }
                     }catch(e){
+                        console.log(e)
                         alert('Usuário ou senha inválidos');
                     }
                 }}

@@ -1,17 +1,20 @@
 import { useState, useEffect } from "react";
-import {  } from 'react-native';
 import {
     StyleSheet,
     View,
     SafeAreaView,
     ScrollView,
-    StatusBar
+    StatusBar,
+    Dimensions 
   } from 'react-native';
 import { Badge, List, Searchbar, Text, useTheme } from 'react-native-paper';
 import { getProduct } from "../services/product";
 import { getData, storeData } from "../services/storage";
 import { Button, ProductCart } from "../components";
 import lodash from 'lodash';
+import "intl";
+import "intl/locale-data/jsonp/en";
+import { execute } from "../services/persist";
 
 const Panel = ({ navigation }) => {
     const theme = useTheme();
@@ -30,6 +33,9 @@ const Panel = ({ navigation }) => {
         let u = await getData('user', true);
         setUser(u);
         await loadData(u);
+
+        const data = await execute("SELECT * FROM categories", "");
+        console.log(data.rows)
     }
 
     const detectScroll = async (e) => {
@@ -62,13 +68,6 @@ const Panel = ({ navigation }) => {
         setCart((_v) => ([...cart]));
     }
         
-
-    useEffect(() => {
-        setInterval(() => {
-            loadCart();
-        }, 3000);
-    }, []);
-
     useEffect(() => {
         storeData('cart', cart, true);
     }, [cart]);
@@ -93,6 +92,11 @@ const Panel = ({ navigation }) => {
     
     useEffect(() => {
         init();
+
+                
+        setInterval(() => {
+            loadCart();
+        }, 3000);
     }, []);
 
     return <View style={styles.container}>
@@ -102,52 +106,51 @@ const Panel = ({ navigation }) => {
                         onChangeText={onChangeSearch}
                         value={searchQuery}
                     />
-                    <List.Section>
+                    <List.Section style={styles.scrollView}>
                         <List.Subheader>Produtos</List.Subheader>
-                        <SafeAreaView style={styles.container_scroll}>
-                            <ScrollView 
-                                onScroll={detectScroll}
-                                style={styles.scrollView}>
-                            {
-                            products ? products?.map((product, idx) => {
-                                return <List.Item 
-                                    key={idx}
-                                    onPress={() => addToCart(product)}
-                                    title={product.name}
-                                    left={() => <List.Icon icon="basket-outline" />} 
-                                    right={() => <View styles={styles.rightButtons}>
-                                        <Badge style={{
-                                        backgroundColor: theme.colors.primary
-                                    }}>{
-                                        new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.promo_price != 0 && product.promo_price != null ? product.promo_price : product.price)
-                                    }</Badge>
-                                </View>}/>
-                            }) : <Text>Nenhum produto encontrado</Text>
-                        }
-                            </ScrollView>
-                        </SafeAreaView>
-                    </List.Section>
+                            <SafeAreaView style={styles.container_scroll}>
+                                <ScrollView 
+                                    onScroll={detectScroll}>
+                                {
+                                products ? products?.map((product, idx) => {
+                                    return <List.Item 
+                                        key={idx}
+                                        onPress={() => addToCart(product)}
+                                        title={product.name}
+                                        left={() => <List.Icon icon="basket-outline" />} 
+                                        right={() => <View styles={styles.rightButtons}>
+                                            <Badge style={{
+                                            backgroundColor: theme.colors.primary
+                                        }}>{
+                                            new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.promo_price != 0 && product.promo_price != null ? product.promo_price : product.price)
+                                        }</Badge>
+                                    </View>}/>
+                                }) : <Text>Nenhum produto encontrado</Text>
+                            }
+                                </ScrollView>
+                            </SafeAreaView>
+                        </List.Section>
                 </View>
                 <View style={styles.right}>
                     <View>
                         <ProductCart cart={cart} setCart={setCart}/>
                     </View>
                     <View style={{
-                        marginTop: '2em'
+                        marginTop: 32
                     }}>
                         <View style={{
                             display: 'flex',
                             flexDirection: 'row',
                             justifyContent: 'space-between',
-                            marginBottom: '.5em'
+                            marginBottom: 8
                         }}>
                             <Text style={{
                                     fontWeight: 'bold',
-                                    fontSize: '2em'
+                                    fontSize: 32
                             }}>Valor total</Text>
                             <Text style={{
                                     fontWeight: 'bold',
-                                    fontSize: '2em'
+                                    fontSize: 32
                             }}>{
                                 new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(lodash.sumBy(cart.map(c => {
                                     return {
@@ -177,8 +180,9 @@ const Panel = ({ navigation }) => {
                                     navigation.navigate('Sale', cart)
                                 }} label="Finalizar compra"/>
                         </View>
+
                         <View style={{
-                            marginTop: '2em',
+                            marginTop: 32,
                             display: 'flex',
                             flexDirection: 'row',
                             justifyContent: 'space-between',
@@ -200,7 +204,7 @@ const styles = StyleSheet.create({
         paddingTop: StatusBar.currentHeight
     },
     scrollView: {
-        height: 'calc(100vh - 200px)',
+        height: Dimensions.get('window').height - 250,
         marginHorizontal: 20,
     },
     button: {

@@ -3,9 +3,12 @@ import {
     View,
     SafeAreaView,
     ScrollView,
-    StatusBar
+    StatusBar,
+    Dimensions
   } from 'react-native';
 import { Badge, List, Text, useTheme } from 'react-native-paper';
+import "intl";
+import "intl/locale-data/jsonp/en";
 
 const styles = StyleSheet.create({
     container_scroll: {
@@ -13,7 +16,7 @@ const styles = StyleSheet.create({
         paddingTop: StatusBar.currentHeight
     },
     scrollView: {
-        height: 'calc(100vh - 200px)',
+        height: Dimensions.get('window').height - 200,
         marginHorizontal: 20,
     },
     rightButtons: {
@@ -38,12 +41,12 @@ const ProductCart = ({ cart, setCart }) => {
         setCart((_v) => ([...c]));
     }
 
-    return <SafeAreaView style={styles.container_scroll}>
-        <ScrollView 
-            style={{
-                ...styles.scrollView,
-                height: '60vh',
-            }}>
+    return <View style={{
+        ...styles.scrollView,
+        height: Dimensions.get('window').height * 0.6,
+    }}>
+    <SafeAreaView style={styles.container_scroll}>
+        <ScrollView>
             {
             cart.length > 0 ? cart?.map((item, idx) => {
                 return <List.Item 
@@ -62,5 +65,6 @@ const ProductCart = ({ cart, setCart }) => {
     }
         </ScrollView>
 </SafeAreaView>
+</View>
 }
 export default ProductCart;

@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { List } from "react-native-paper";
 import { Button, Calculator, ProductCart } from "../components";
 import { venda } from "../services/product";
 import { storeData } from "../services/storage";
+import "intl";
+import "intl/locale-data/jsonp/en";
 
 const Sale = ({
-    route
+    route,
+    navigation
 }) => {
     const [cart, setCart] = useState(route.params || []);
     const [value, setValue] = useState("0,00");
@@ -58,13 +61,20 @@ const Sale = ({
         }
     }
 
-    const finalizarCompra = () => {
+    const finalizarCompra = async () => {
         try{
-            venda(total, payments, cart, troco);
-            alert("Venda finalizada com sucesso!");
+            try{
+                await venda(total, payments, cart, troco);
+                alert("Venda finalizada com sucesso!");
+                storeData('cart', [], true);
+            }catch(err){
+                alert("Erro ao finalizar venda!");
+                return
+            }
             navigation.navigate('Panel')
         }catch(err){
-            alert("Erro ao finalizar venda!");
+            console.log(err);
+            alert("Um erro ocorreu ao redirecionar para a tela de vendas!")
         }
     }
 
@@ -140,11 +150,11 @@ const styles = StyleSheet.create({
     left: {
         padding: 10,
         height: '100%',
-        width:'50%'
+        width: '50%'
     },
     right: {
         padding: 10,
-        width:'50%'
+        width: '50%'
     },
     button: {
         borderRadius: 0,

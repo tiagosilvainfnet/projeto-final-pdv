@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native"
+import { Dimensions, StyleSheet, Text, View } from "react-native"
 import { Button, TextField } from "..";
 
 const paymentType = [
@@ -118,11 +118,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     containerTextField:{
-        paddingLeft: '2.5%',
-        paddingRight: '2.5%',
+        paddingLeft: '1%',
+        paddingRight: '1%',
     },
     paddingBtn: {
-        padding: '2.5%',
+        padding: '1%',
         width: '33%',
     },
     btnCalculator: {
