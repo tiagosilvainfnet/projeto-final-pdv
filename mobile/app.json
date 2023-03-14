@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
+    "name": "Meu PDV",
+    "slug": "MeuPDV",
     "version": "1.0.0",
     "orientation": "landscape",
     "icon": "./assets/icon.png",
@@ -26,14 +26,14 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.tiagosilvainfnet.mobile"
+      "package": "dev.tiagosilva.meupdv"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "29c20163-50a0-4d84-91a0-b3536e5e4d92"
+        "projectId": "c64fce68-28d1-449f-bfc8-521e27cf9d9c"
       }
     }
   }

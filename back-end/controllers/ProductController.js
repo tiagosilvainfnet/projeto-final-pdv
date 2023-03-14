@@ -7,6 +7,21 @@ class ProductController extends GenericController{
       super();
     }
 
+    async getSync(query){
+      const { store_id } = query;
+
+      const product = await Product.findAll({
+        where: {
+          store_id
+        }
+      });
+
+      return {
+        rows: product
+      };
+    }
+
+
     async get(query){
       const { store_id, limit, page, search } = query;
       const paginate = this.generatePagination(limit, page)

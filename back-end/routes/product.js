@@ -16,6 +16,18 @@ product.get('', async(req, res) => {
     res.send({})
 })
 
+product.get('/sync', async(req, res) => {
+    const products = await productCtrl.getSync(req.query);
+    
+    if(products){
+        res.statusCode = 200;
+        res.send(products)
+        return;
+    }
+    res.statusCode = 404;
+    res.send({})
+})
+
 product.get('/:id', async(req, res) => {
     const product = await productCtrl.getOne(req.params.id);
     
@@ -59,7 +71,7 @@ product.patch('/:id', async(req, res) => {
     }catch(err){
         res.send({'msg': `Erro ao editar produto. Erro ${err}`, status: 400})
     }
-})
+}),
 
 
 module.exports = product;

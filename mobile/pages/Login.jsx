@@ -63,7 +63,7 @@ const Login = ({ navigation, route }) => {
                         if(response.status === 200){
                             navigation.navigate('Panel');
                             await storeData('user', response.data, true);
-                            createTables();
+                            await createTables();
                         }else{
                             alert('Usuário ou senha inválidos');
                         }
